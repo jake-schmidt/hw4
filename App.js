@@ -66,14 +66,12 @@ export default class App extends React.Component {
     console.log(response.location);
     console.log(response.weather);
 
-
     // manipulate state
     this.setState({
       locationName: response.location,
-      currentTemperature: Math.round(response.weather.currently.apparentTemperature),
-      currentSummary: response.weather.currently.summary,
-      currentIcon: response.weather.currently.icon,
-      forecast: []
+      currentIcon: icon(response.weather.currently.icon),
+      currentTemperature: Math.round(response.weather.currently.temperature),
+      forecast: response.weather.daily.data
     });
   }
 
@@ -84,14 +82,21 @@ export default class App extends React.Component {
     //    currentTemperature, currentSummary)
     // 3. Forecast (forecastDay, forecastIcon, forecastTemperature)
     let forecast = []; // this will eventually hold the JSX elements for each day
-    for (let i = 0; i < 6; i++) {
-      forecast.push(
-        <View style={styles.forecastDay} key={i}>
-          <Text style={styles.forecastIcon}>{this.state.forecast[i] && (<Icon size={30} name={icon(this.state.forecast[i].icon)} color="#000" />)}</Text>
-          <Text style={styles.forecastTemperature}>{this.state.forecast[i] && (Math.round(this.state.forecast[i].temperatureHigh))}</Text>
-        </View>
-      )
+
+    // loop through the forecast object in state and create JSX for the forecast
+    if (this.state.forecast.length > 0) {
+      for (let i=0; i<5; i++) {
+        forecast.push(
+          <View style={styles.forecastDay} key={i}>
+            <Text style={styles.forecastIcon}>
+              <Icon size={30} name={icon(this.state.forecast[i].icon)} />
+            </Text>
+            <Text style={styles.forecastTemperature}>{Math.round(this.state.forecast[i].temperatureHigh)}</Text>
+          </View>
+        )
+      }
     }
+
     return (
       <View style={styles.container}>
         <View>
@@ -99,9 +104,12 @@ export default class App extends React.Component {
           <Button onPress={() => this.getWeather()} title="Get the weather!" />
         </View>
         <View style={styles.currentWeather}>
-          <Text style={styles.currentIcon}>{this.state.currentIcon && (<Icon size={100} name={icon(this.state.currentIcon)} color="#000" />)}</Text>
+          {/* Current weather conditions */}
+          <Text style={styles.currentIcon}>
+            {this.state.currentIcon && <Icon name={this.state.currentIcon} size={100} color="#000" />}
+          </Text>
           <Text style={styles.locationText}>{this.state.locationName}</Text>
-          <Text style={styles.currentTemperature}>{this.state.currentTemperature && (this.state.currentTemperature)}</Text>
+          <Text style={styles.currentTemperature}>{this.state.currentTemperature}</Text>
           <Text style={styles.currentSummary}>{this.state.currentSummary}</Text>
         </View>
         <View style={styles.forecast}>
@@ -110,3 +118,4 @@ export default class App extends React.Component {
       </View>
     );
   }
+}
