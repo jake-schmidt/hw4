@@ -69,8 +69,9 @@ export default class App extends React.Component {
     // manipulate state
     this.setState({
       locationName: response.location,
-      currentIcon: icon(response.weather.currently.icon),
       currentTemperature: Math.round(response.weather.currently.temperature),
+      currentSummary: response.weather.currently.summary,
+      currentIcon: icon(response.weather.currently.icon),
       forecast: response.weather.daily.data
     });
   }
@@ -85,7 +86,7 @@ export default class App extends React.Component {
 
     // loop through the forecast object in state and create JSX for the forecast
     if (this.state.forecast.length > 0) {
-      for (let i=0; i<5; i++) {
+      for (let i=0; i<6; i++) {
         forecast.push(
           <View style={styles.forecastDay} key={i}>
             <Text style={styles.forecastIcon}>
